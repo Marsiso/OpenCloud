@@ -1,8 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCloud.Domain", "src\OpenCloud.Domain\OpenCloud.Domain.csproj", "{21967967-318F-4005-89FA-720752AE633A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCloud.Application", "src\OpenCloud.Application\OpenCloud.Application.csproj", "{D57FEFDC-89D7-4FB1-906B-C8D9D0066AD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCloud.Core", "src\OpenCloud.Core\OpenCloud.Core.csproj", "{2E1316F5-F5F5-45BD-A855-EBEA45ACB453}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCloud.Data", "src\OpenCloud.Data\OpenCloud.Data.csproj", "{5B6F0DF1-67AC-4746-8C2C-72AD83C86084}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCloud.Web", "src\OpenCloud.Web\OpenCloud.Web.csproj", "{1D0A4608-675D-42AF-84DF-520C8426CE37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21967967-318F-4005-89FA-720752AE633A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21967967-318F-4005-89FA-720752AE633A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21967967-318F-4005-89FA-720752AE633A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21967967-318F-4005-89FA-720752AE633A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D57FEFDC-89D7-4FB1-906B-C8D9D0066AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57FEFDC-89D7-4FB1-906B-C8D9D0066AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57FEFDC-89D7-4FB1-906B-C8D9D0066AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57FEFDC-89D7-4FB1-906B-C8D9D0066AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E1316F5-F5F5-45BD-A855-EBEA45ACB453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E1316F5-F5F5-45BD-A855-EBEA45ACB453}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E1316F5-F5F5-45BD-A855-EBEA45ACB453}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E1316F5-F5F5-45BD-A855-EBEA45ACB453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B6F0DF1-67AC-4746-8C2C-72AD83C86084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B6F0DF1-67AC-4746-8C2C-72AD83C86084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B6F0DF1-67AC-4746-8C2C-72AD83C86084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B6F0DF1-67AC-4746-8C2C-72AD83C86084}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D0A4608-675D-42AF-84DF-520C8426CE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D0A4608-675D-42AF-84DF-520C8426CE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D0A4608-675D-42AF-84DF-520C8426CE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D0A4608-675D-42AF-84DF-520C8426CE37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
