@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using OpenCloud.Domain.Models;
 
@@ -7,12 +8,14 @@ namespace OpenCloud.Data;
 
 public class DataContext : DbContext
 {
-	public DataContext(DbContextOptions<DataContext> options, IOptions<DataContextOptions> providerOptions) : base(options)
+	public DataContext(DbContextOptions<DataContext> options, IOptions<DataContextOptions> providerOptions, ISaveChangesInterceptor saveChangesInterceptor) : base(options)
 	{
 		_providerOptions = providerOptions;
+		_saveChangesInterceptor = saveChangesInterceptor;
 	}
 
 	private readonly IOptions<DataContextOptions> _providerOptions;
+	private readonly ISaveChangesInterceptor _saveChangesInterceptor;
 
 	public DbSet<User> Users { get; set; } = default!;
 
@@ -30,6 +33,8 @@ public class DataContext : DbContext
 		}.ToString();
 
 		optionsBuilder.UseSqlite(connectionString);
+
+		optionsBuilder.AddInterceptors(_saveChangesInterceptor);
 	}
 	
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
