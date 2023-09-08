@@ -10,4 +10,12 @@
       <ProjectReference Include="..\OpenCloud.Domain\OpenCloud.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10" />
+    </ItemGroup>
+
 </Project>
