@@ -1,6 +1,6 @@
 ﻿namespace OpenCloud.Data;
 
-public sealed class DataContextOptions
+public class DataContextOptions
 {
 	public const string SectionName = "SQLite";
 

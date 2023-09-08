@@ -1,17 +1,20 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using OpenCloud.Domain.Models;
 
 namespace OpenCloud.Data;
 
-public sealed class DataContext : DbContext
+public class DataContext : DbContext
 {
-	private readonly IOptions<DataContextOptions> _providerOptions;
-
 	public DataContext(DbContextOptions<DataContext> options, IOptions<DataContextOptions> providerOptions) : base(options)
 	{
 		_providerOptions = providerOptions;
 	}
+
+	private readonly IOptions<DataContextOptions> _providerOptions;
+
+	public DbSet<User> Users { get; set; } = default!;
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -27,5 +30,12 @@ public sealed class DataContext : DbContext
 		}.ToString();
 
 		optionsBuilder.UseSqlite(connectionString);
+	}
+	
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		base.OnModelCreating(modelBuilder);
+
+		modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
 	}
 }
