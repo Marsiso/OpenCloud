@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using OpenCloud.Application.Validators;
 using OpenCloud.Data;
+using SaveChangesInterceptor = OpenCloud.Data.SaveChangesInterceptor;
 
 namespace OpenCloud.Web;
 
@@ -16,6 +18,12 @@ public static class ConfigurationExtensions
 			.Bind(configuration.GetSection(DataContextOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
+		
+		services
+			.AddHttpContextAccessor()
+			.AddScoped<HttpContextAccessor>();
+
+		services.AddScoped<ISaveChangesInterceptor, SaveChangesInterceptor>();
 
 		services.AddDbContext<DataContext>(options =>
 		{
