@@ -1,3 +1,48 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims;
 
-<main> @Body </main>
+@inherits LayoutComponentBase
+
+<div>
+	<AuthorizeView>
+		<Authorized>
+			<a href="/Authentication/Logout" target="_top">Odhlásit se</a>
+			<main>
+				@Body
+			</main>
+		</Authorized>
+		<NotAuthorized>
+			<a href="/Authentication/Login" target="_top">Přihlásit se</a>
+		</NotAuthorized>
+	</AuthorizeView>
+</div>
+
+@code
+{
+	[CascadingParameter]
+	private Task<AuthenticationState>? _authenticationState { get; set; }
+
+	public string? Identifier { get; set; }
+	public string? FirstName { get; set; }
+	public string? LastName { get; set; }
+	public string? Email { get; set; }
+	public string? ProfilePhotoUrl { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (_authenticationState is not null)
+		{
+			var authenticationState = await _authenticationState;
+
+			var claimsPrincipal = authenticationState.User;
+
+			if (claimsPrincipal.Identity is not null && claimsPrincipal.Identity.IsAuthenticated)
+			{
+				Identifier = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+				FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName);
+				LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname);
+				Email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
+				ProfilePhotoUrl = claimsPrincipal.FindFirstValue("urn:google:image");
+			}
+		}
+	}
+}

@@ -1,3 +1,4 @@
+using OpenCloud.Application.Security;
 using OpenCloud.Data;
 using OpenCloud.Web;
 
@@ -7,6 +8,7 @@ applicationBuilder.Services.AddRazorPages();
 applicationBuilder.Services.AddServerSideBlazor();
 
 applicationBuilder.Services.AddSqlite(applicationBuilder.Configuration, applicationBuilder.Environment);
+applicationBuilder.Services.AddGoogleCloudIdentity(applicationBuilder.Configuration);
 
 var application = applicationBuilder.Build();
 
@@ -23,12 +25,17 @@ if (application.Environment.IsDevelopment())
 }
 else
 {
+	application.UseSecurityHeaders(SecurityHeaderHelpers.GetHeaderPolicyCollection());
+	
 	databaseContext.Database.EnsureCreated();
 }
 
 application.UseHttpsRedirection();
 
 application.UseStaticFiles();
+
+application.UseCookiePolicy();
+application.UseAuthentication();
 
 application.UseRouting();
 
