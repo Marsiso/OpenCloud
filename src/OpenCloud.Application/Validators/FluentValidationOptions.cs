@@ -8,14 +8,14 @@ public class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> wher
 {
 	private readonly IValidator<TOptions> _validator;
 
-	public string? Name { get; }
-
 	public FluentValidationOptions(string name, IValidator<TOptions> validator)
 	{
 		_validator = validator;
 
 		Name = name;
 	}
+
+	public string? Name { get; }
 
 	public ValidateOptionsResult Validate(string? optionsName, TOptions options)
 	{

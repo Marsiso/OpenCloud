@@ -1,7 +1,6 @@
-﻿namespace OpenCloud.Application.ViewModels
+﻿namespace OpenCloud.Application.ViewModels;
+
+public static class Routes
 {
-	public static class Routes
-	{
-		public const string Index = "/";
-	}
+	public const string Index = "/";
 }

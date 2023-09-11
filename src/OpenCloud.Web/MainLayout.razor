@@ -1,12 +1,11 @@
-﻿@using System.Security.Claims;
-
+﻿@using System.Security.Claims
 @inherits LayoutComponentBase
 
 <div>
 	<AuthorizeView>
 		<Authorized>
-			<a href="/Authentication/Logout" target="_top">Odhlásit se</a>
 			<main>
+				<a href="/Authentication/Logout" target="_top">Odhlásit se</a>
 				@Body
 			</main>
 		</Authorized>

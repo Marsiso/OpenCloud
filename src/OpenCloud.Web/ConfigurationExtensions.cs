@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using Cloud.Application.Validations;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -6,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OpenCloud.Application.Authentication;
 using OpenCloud.Application.Validators;
+using OpenCloud.Core.Commands.Users;
 using OpenCloud.Data;
 using SaveChangesInterceptor = OpenCloud.Data.SaveChangesInterceptor;
 
@@ -16,13 +19,13 @@ public static class ConfigurationExtensions
 	public static IServiceCollection AddSqlite(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
 	{
 		services.AddSingleton<IValidator<DataContextOptions>, DataContextOptionsValidator>();
-			
+
 		services
 			.AddOptions<DataContextOptions>()
 			.Bind(configuration.GetSection(DataContextOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
-		
+
 		services
 			.AddHttpContextAccessor()
 			.AddScoped<HttpContextAccessor>();
@@ -32,17 +35,17 @@ public static class ConfigurationExtensions
 		services.AddDbContext<DataContext>(options =>
 		{
 			options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-			
+
 			if (environment.IsDevelopment())
 			{
 				options.EnableDetailedErrors();
 				options.EnableSensitiveDataLogging();
 			}
 		});
-		
+
 		return services;
 	}
-	
+
 	public static IServiceCollection AddGoogleCloudIdentity(this IServiceCollection services, IConfiguration configuration)
 	{
 		var googleCloudIdentityConfigurationSection = configuration.GetSection(GoogleCloudIdentityOptions.SegmentName);
@@ -85,6 +88,17 @@ public static class ConfigurationExtensions
 		services.AddScoped<HttpClient>();
 
 		services.AddScoped<AuthenticationStateProvider, BlazorAuthenticationStateProvider>();
+
+		return services;
+	}
+
+	public static IServiceCollection AddCQRS(this IServiceCollection services)
+	{
+		services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(CreateUserCommandHandler).Assembly));
+
+		services.AddValidatorsFromAssembly(typeof(CreateUserCommandValidator).Assembly);
+
+		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FluentValidationPipelineBehaviour<,>));
 
 		return services;
 	}

@@ -12,66 +12,64 @@ public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public SaveChangesInterceptor(IHttpContextAccessor httpContextAccessor)
-		{
-			_httpContextAccessor = httpContextAccessor;
-		}
+	public SaveChangesInterceptor(IHttpContextAccessor httpContextAccessor)
+	{
+		_httpContextAccessor = httpContextAccessor;
+	}
 
-		public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
-		{
-			if (eventData.Context is not DataContext databaseContext) return base.SavingChanges(eventData, result);
+	public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+	{
+		if (eventData.Context is not DataContext databaseContext) return base.SavingChanges(eventData, result);
 
-			var httpContext = _httpContextAccessor.HttpContext;
+		var httpContext = _httpContextAccessor.HttpContext;
 
-			OnBeforeSavedChanges(databaseContext, httpContext);
+		OnBeforeSavedChanges(databaseContext, httpContext);
 
-			return base.SavingChanges(eventData, result);
-		}
+		return base.SavingChanges(eventData, result);
+	}
 
-		public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
-		{
-			if (eventData.Context is not DataContext databaseContext) return base.SavedChanges(eventData, result);
+	public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
+	{
+		if (eventData.Context is not DataContext databaseContext) return base.SavedChanges(eventData, result);
 
-			var httpContext = _httpContextAccessor.HttpContext;
+		var httpContext = _httpContextAccessor.HttpContext;
 
-			OnAfterSavedChanges(databaseContext, httpContext);
+		OnAfterSavedChanges(databaseContext, httpContext);
 
-			return base.SavedChanges(eventData, result);
-		}
+		return base.SavedChanges(eventData, result);
+	}
 
-		private void OnBeforeSavedChanges(DataContext databaseContext, HttpContext? httpContext)
-		{
-			databaseContext.ChangeTracker.DetectChanges();
+	private void OnBeforeSavedChanges(DataContext databaseContext, HttpContext? httpContext)
+	{
+		databaseContext.ChangeTracker.DetectChanges();
 
-			var identifier = httpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		var identifier = httpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-			User? user = default;
+		User? user = default;
 
-			if (!string.IsNullOrWhiteSpace(identifier)) user = UserPreCompiledQueries.FindUserByIdentifier(databaseContext, identifier);
+		if (!string.IsNullOrWhiteSpace(identifier)) user = UserPreCompiledQueries.FindUserByIdentifier(databaseContext, identifier);
 
-			var dateTime = DateTime.UtcNow;
+		var dateTime = DateTime.UtcNow;
 
-			foreach (var entityEntry in databaseContext.ChangeTracker.Entries<ChangeTrackingEntity>())
+		foreach (var entityEntry in databaseContext.ChangeTracker.Entries<ChangeTrackingEntity>())
+			switch (entityEntry.State)
 			{
-				switch (entityEntry.State)
-				{
-					case EntityState.Added:
-						entityEntry.Entity.IsActive = true;
-						entityEntry.Entity.CreatedBy = entityEntry.Entity.UpdatedBy = user?.UserID;
-						entityEntry.Entity.DateCreated = entityEntry.Entity.DateUpdated = dateTime;
-						continue;
-					case EntityState.Modified:
-						entityEntry.Entity.UpdatedBy = user?.UserID;
-						entityEntry.Entity.DateUpdated = dateTime;
-						continue;
-					case EntityState.Deleted:
-						throw new InvalidOperationException($"Smazání záznamů v databázi není povolená operace. Služba: '{nameof(SaveChangesInterceptor)}' Akce: '{nameof(OnBeforeSavedChanges)}'.");
-					default: continue;
-				}
+				case EntityState.Added:
+					entityEntry.Entity.IsActive = true;
+					entityEntry.Entity.CreatedBy = entityEntry.Entity.UpdatedBy = user?.UserID;
+					entityEntry.Entity.DateCreated = entityEntry.Entity.DateUpdated = dateTime;
+					continue;
+				case EntityState.Modified:
+					entityEntry.Entity.UpdatedBy = user?.UserID;
+					entityEntry.Entity.DateUpdated = dateTime;
+					continue;
+				case EntityState.Deleted:
+					throw new InvalidOperationException($"Smazání záznamů v databázi není povolená operace. Služba: '{nameof(SaveChangesInterceptor)}' Akce: '{nameof(OnBeforeSavedChanges)}'.");
+				default: continue;
 			}
-		}
+	}
 
-		private void OnAfterSavedChanges(DataContext databaseContext, HttpContext? httpContext)
-		{
-		}
+	private void OnAfterSavedChanges(DataContext databaseContext, HttpContext? httpContext)
+	{
+	}
 }

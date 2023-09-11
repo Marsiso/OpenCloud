@@ -17,7 +17,7 @@ public class LoginViewModel : PageModel
 
 		var authenticationProperties = new AuthenticationProperties
 		{
-			RedirectUri = Url.Page("./Login", pageHandler: "Callback", values: new { returnUrl }),
+			RedirectUri = Url.Page("./Login", "Callback", new { returnUrl })
 		};
 
 		return new ChallengeResult(provider, authenticationProperties);
@@ -26,7 +26,7 @@ public class LoginViewModel : PageModel
 	[HttpGet]
 	public async Task<IActionResult> OnGetCallbackAsync(string? returnUrl = default, string? remoteError = default)
 	{
-		var user = base.User.Identities.FirstOrDefault();
+		var user = User.Identities.FirstOrDefault();
 
 		var authenticated = user?.IsAuthenticated ?? false;
 
