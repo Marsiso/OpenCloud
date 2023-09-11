@@ -7,19 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\OpenCloud.Core\OpenCloud.Core.csproj" />
+        <ProjectReference Include="..\OpenCloud.Core\OpenCloud.Core.csproj"/>
     </ItemGroup>
-
 
     <ItemGroup>
-      <PackageReference Include="MudBlazor" Version="6.9.0" />
-      <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.20.0" />
+        <PackageReference Include="MudBlazor" Version="6.9.0"/>
+        <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.20.0"/>
     </ItemGroup>
-
-
-
-
-
-
 
 </Project>

@@ -1,3 +1,4 @@
+using OpenCloud.Application.Mappings;
 using OpenCloud.Application.Security;
 using OpenCloud.Data;
 using OpenCloud.Web;
@@ -7,8 +8,10 @@ var applicationBuilder = WebApplication.CreateBuilder(args);
 applicationBuilder.Services.AddRazorPages();
 applicationBuilder.Services.AddServerSideBlazor();
 
+applicationBuilder.Services.AddAutoMapper(typeof(UserMappingConfiguration));
 applicationBuilder.Services.AddSqlite(applicationBuilder.Configuration, applicationBuilder.Environment);
 applicationBuilder.Services.AddGoogleCloudIdentity(applicationBuilder.Configuration);
+applicationBuilder.Services.AddCQRS();
 
 var application = applicationBuilder.Build();
 
@@ -26,7 +29,7 @@ if (application.Environment.IsDevelopment())
 else
 {
 	application.UseSecurityHeaders(SecurityHeaderHelpers.GetHeaderPolicyCollection());
-	
+
 	databaseContext.Database.EnsureCreated();
 }
 

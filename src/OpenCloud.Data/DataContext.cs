@@ -8,14 +8,14 @@ namespace OpenCloud.Data;
 
 public class DataContext : DbContext
 {
+	private readonly IOptions<DataContextOptions> _providerOptions;
+	private readonly ISaveChangesInterceptor _saveChangesInterceptor;
+
 	public DataContext(DbContextOptions<DataContext> options, IOptions<DataContextOptions> providerOptions, ISaveChangesInterceptor saveChangesInterceptor) : base(options)
 	{
 		_providerOptions = providerOptions;
 		_saveChangesInterceptor = saveChangesInterceptor;
 	}
-
-	private readonly IOptions<DataContextOptions> _providerOptions;
-	private readonly ISaveChangesInterceptor _saveChangesInterceptor;
 
 	public DbSet<User> Users { get; set; } = default!;
 
@@ -36,7 +36,7 @@ public class DataContext : DbContext
 
 		optionsBuilder.AddInterceptors(_saveChangesInterceptor);
 	}
-	
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);

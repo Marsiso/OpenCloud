@@ -2,10 +2,12 @@
 
 public class FluentValidationEntityException : Exception
 {
-	public FluentValidationEntityException(Dictionary<string, string[]> entityErrorsByProperty)
+	public FluentValidationEntityException(string entityTypeName, Dictionary<string, string[]> entityErrorsByProperty)
 	{
+		EntityTypeName = entityTypeName;
 		EntityErrorsByProperty = entityErrorsByProperty;
 	}
 
-	public Dictionary<string, string[]> EntityErrorsByProperty { get; set; }
+	public string EntityTypeName { get; }
+	public Dictionary<string, string[]> EntityErrorsByProperty { get; }
 }
