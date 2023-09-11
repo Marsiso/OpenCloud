@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using OpenCloud.Core.Commands.Users;
 using OpenCloud.Core.Queries.Users;
+using OpenCloud.Domain.DataTransferObjects.Authentication;
 
 namespace OpenCloud.Application.Authentication;
 
@@ -29,53 +30,43 @@ public class BlazorAuthenticationStateProvider : AuthenticationStateProvider
 
 			var claimsPrincipal = httpContext?.User;
 
-			if (claimsPrincipal is not { Claims: not null } || !claimsPrincipal.Claims.Any())
+			if (claimsPrincipal is not { Claims: not null } || !claimsPrincipal.Claims.Any()) return GetAnonymousAuthenticationState();
+
+			var authenticationToken = new GoogleCloudIdentityToken(
+				claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier),
+				claimsPrincipal.FindFirstValue(ClaimTypes.GivenName),
+				claimsPrincipal.FindFirstValue(ClaimTypes.Surname),
+				claimsPrincipal.FindFirstValue(ClaimTypes.Email),
+				claimsPrincipal.FindFirstValue("urn:google:image"));
+
+			var userExistsQuery = new UserWithIdentifierExistsQuery(authenticationToken.Identifier);
+
+			var userExists = await _messageHandlerBroker.Send(userExistsQuery);
+
+			if (userExists)
 			{
-				return GetAnonymousAuthenticationState();
+				var getUserQuery = new GetUserByIdentifierQuery(authenticationToken.Identifier);
+
+				var originalUser = await _messageHandlerBroker.Send(getUserQuery);
+
+				if (originalUser is null) return GetAnonymousAuthenticationState();
+
+				_ = _mapper.Map(authenticationToken, originalUser);
+
+				var updateUserCommand = _mapper.Map<UpdateUserCommand>(originalUser);
+
+				_ = await _messageHandlerBroker.Send(updateUserCommand);
 			}
 			else
 			{
-				var identifier = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
-				var firstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName);
-				var lastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname);
-				var email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
-				var profilePhotoUrl = claimsPrincipal.FindFirstValue("urn:google:image");
+				var createUserCommand = _mapper.Map<CreateUserCommand>(authenticationToken);
 
-				var userExistsQuery = new UserWithIdentifierExistsQuery(identifier);
-
-				var userExists = await _messageHandlerBroker.Send(userExistsQuery);
-
-				if (userExists)
-				{
-					var getUserQuery = new GetUserByIdentifierQuery(identifier);
-
-					var originalUser = await _messageHandlerBroker.Send(getUserQuery);
-
-					if (originalUser is null) return GetAnonymousAuthenticationState();
-
-					var updateUserCommand = _mapper.Map<UpdateUserCommand>(originalUser);
-
-					updateUserCommand = updateUserCommand with
-					{
-						FirstName = firstName,
-						LastName = lastName,
-						Email = email,
-						ProfilePhotoUrl = profilePhotoUrl
-					};
-
-					await _messageHandlerBroker.Send(updateUserCommand);
-				}
-				else
-				{
-					var createUserCommand = new CreateUserCommand(identifier, firstName, lastName, email, profilePhotoUrl);
-
-					await _messageHandlerBroker.Send(createUserCommand);
-				}
-
-				return new AuthenticationState(claimsPrincipal);
+				_ = await _messageHandlerBroker.Send(createUserCommand);
 			}
+
+			return new AuthenticationState(claimsPrincipal);
 		}
-		catch (Exception)
+		catch (Exception exception)
 		{
 			return GetAnonymousAuthenticationState();
 		}

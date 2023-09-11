@@ -28,8 +28,6 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Unit>
 
 		_databaseContext.Users.Add(userToCreate);
 
-		cancellationToken.ThrowIfCancellationRequested();
-
 		_databaseContext.SaveChanges();
 
 		return Unit.Task;
