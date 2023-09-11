@@ -1,30 +1,86 @@
 ﻿@using System.Security.Claims
+@using OpenCloud.Domain.DataTransferObjects.Authentication
+@using OpenCloud.Application.ViewModels
 @inherits LayoutComponentBase
 
-<div>
-	<AuthorizeView>
-		<Authorized>
-			<main>
-				<a href="/Authentication/Logout" target="_top">Odhlásit se</a>
-				@Body
-			</main>
-		</Authorized>
-		<NotAuthorized>
-			<a href="/Authentication/Login" target="_top">Přihlásit se</a>
-		</NotAuthorized>
-	</AuthorizeView>
-</div>
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<AuthorizeView>
+	<Authorized>
+		<MudLayout>
+			<MudAppBar Color="Color.Transparent" Fixed="true" WrapContent="true" Elevation="25">
+				<MudBreakpointProvider>
+					<MudHidden Breakpoint="Breakpoint.MdAndDown">
+						<MudButton StartIcon="@Icons.Material.Rounded.Cloud" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Medium" Style="margin-right: 1rem; color: rebeccapurple; font-weight: bold;">OpenCloud</MudButton>
+						<MudButton StartIcon="@Icons.Material.Rounded.Folder" Color="Color.Inherit" Variant="Variant.Text" Href="@Routes.Index" IconSize="Size.Small" Style="margin-right: 0.5rem;">Soubory</MudButton>
+						<MudButton StartIcon="@Icons.Material.Rounded.FolderShared" Color="Color.Inherit" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;">Sdílené soubory</MudButton>
+						<MudButton StartIcon="@Icons.Material.Rounded.AccessTimeFilled" Color="Color.Inherit" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;">Nedávné soubory</MudButton>
+						<MudButton StartIcon="@Icons.Material.Rounded.Bookmark" Color="Color.Inherit" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;">Oblíbené soubory</MudButton>
+						<MudButton StartIcon="@Icons.Material.Rounded.Delete" Color="Color.Inherit" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small">Smazané soubory</MudButton>
+						<MudSpacer/>
+						<MudText Align="Align.Center" Style="margin-right: 1rem; font-weight: bold;">@AuthenticationToken?.FirstName</MudText>
+						<MudMenu TransformOrigin="Origin.BottomLeft" Variant="Variant.Text" AnchorOrigin="Origin.BottomLeft">
+							<ActivatorContent>
+								<MudAvatar Image="@AuthenticationToken?.ProfilePhotoUrl" Size="Size.Medium"/>
+							</ActivatorContent>
+							<ChildContent>
+								<MudMenuItem Icon="@Icons.Material.Rounded.Palette" IconSize="Size.Small" Href="@Routes.Index">Motiv</MudMenuItem>
+								<MudMenuItem Icon="@Icons.Material.Rounded.AccountCircle" IconSize="Size.Small" Href="@Routes.Index">Účet</MudMenuItem>
+								<MudMenuItem Icon="@Icons.Material.Rounded.Logout" IconSize="Size.Small" Href="/Authentication/Logout" Target="_top">Odhlásit se</MudMenuItem>
+							</ChildContent>
+						</MudMenu>
+					</MudHidden>
+                
+					<MudHidden Breakpoint="Breakpoint.MdAndDown" Invert="true">
+						<MudButton StartIcon="@Icons.Material.Rounded.Cloud" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Medium" Style="margin-right: 1rem; color: rebeccapurple; font-weight: bold;">OpenCloud</MudButton>
+						<MudIconButton Icon="@Icons.Material.Rounded.Folder" Color="Color.Inherit" Edge="Edge.Start" Title="Soubory" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;"/>
+						<MudIconButton Icon="@Icons.Material.Rounded.FolderShared" Color="Color.Inherit" Edge="Edge.Start" Title="Sdílené soubory" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;"/>
+						<MudIconButton Icon="@Icons.Material.Rounded.AccessTimeFilled" Color="Color.Inherit" Edge="Edge.Start" Title="Nedávné soubory" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;"/>
+						<MudIconButton Icon="@Icons.Material.Rounded.Bookmark" Color="Color.Inherit" Edge="Edge.Start" Title="Oblíbené soubory" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;"/>
+						<MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Inherit" Edge="Edge.Start" Title="Smazané soubory" Variant="Variant.Text" Href="@Routes.Index" Size="Size.Small" Style="margin-right: 0.5rem;"/>
+						<MudSpacer/>
+						<MudMenu TransformOrigin="Origin.BottomLeft" Variant="Variant.Text" AnchorOrigin="Origin.BottomLeft">
+							<ActivatorContent>
+								<MudAvatar Image="@AuthenticationToken?.ProfilePhotoUrl" Size="Size.Medium"/>
+							</ActivatorContent>
+							<ChildContent>
+								<MudMenuItem Icon="@Icons.Material.Rounded.Palette" IconSize="Size.Small" Href="@Routes.Index">Motiv</MudMenuItem>
+								<MudMenuItem Icon="@Icons.Material.Rounded.Palette" IconSize="Size.Small" Href="@Routes.Index">Motiv</MudMenuItem>
+								<MudMenuItem Icon="@Icons.Material.Rounded.AccountCircle" IconSize="Size.Small" Href="@Routes.Index">Účet</MudMenuItem>
+								<MudMenuItem Icon="@Icons.Material.Rounded.Logout" IconSize="Size.Small" Href="/Authentication/Logout" Target="_top"></MudMenuItem>
+							</ChildContent>
+						</MudMenu>
+					</MudHidden>
+				</MudBreakpointProvider>
+			</MudAppBar>
+			<MudMainContent>
+				<MudContainer MaxWidth="MaxWidth.Medium" Class="py-6">
+					@Body
+				</MudContainer>
+			</MudMainContent>
+		</MudLayout>
+	</Authorized>
+	<NotAuthorized>
+		<MudPaper Class="d-flex justify-center align-center" Elevation="0" Style="min-height: 100vh;">
+			<MudPaper Elevation="25" Width="30rem" Height="20rem">
+				<MudStack Class="d-flex justify-center mx-10 my-10">
+					<MudText Typo="Typo.h5" Align="Align.Center">OpenCloud</MudText>
+					<MudText Typo="Typo.subtitle1" Align="Align.Center" Class="my-5"><span style="color: rebeccapurple; font-weight: bold;">Vítám tě,</span><br/>čeká tě den plný příležitostí.</MudText>
+					<MudButton IconSize="Size.Medium" StartIcon="@Icons.Custom.Brands.Google" Target="_top" Href="/Authentication/Login" Variant="Variant.Text">Přihlásit se</MudButton>
+				</MudStack>
+			</MudPaper>
+		</MudPaper>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code
 {
 	[CascadingParameter]
 	private Task<AuthenticationState>? _authenticationState { get; set; }
 
-	public string? Identifier { get; set; }
-	public string? FirstName { get; set; }
-	public string? LastName { get; set; }
-	public string? Email { get; set; }
-	public string? ProfilePhotoUrl { get; set; }
+	public GoogleCloudIdentityToken? AuthenticationToken { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -36,12 +92,17 @@
 
 			if (claimsPrincipal.Identity is not null && claimsPrincipal.Identity.IsAuthenticated)
 			{
-				Identifier = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
-				FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName);
-				LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname);
-				Email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
-				ProfilePhotoUrl = claimsPrincipal.FindFirstValue("urn:google:image");
+				AuthenticationToken = new GoogleCloudIdentityToken(
+					claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier),
+					claimsPrincipal.FindFirstValue(ClaimTypes.GivenName),
+					claimsPrincipal.FindFirstValue(ClaimTypes.Surname),
+					claimsPrincipal.FindFirstValue(ClaimTypes.Email),
+					claimsPrincipal.FindFirstValue("urn:google:image"));
 			}
+		}
+		else
+		{
+			AuthenticationToken = default;
 		}
 	}
 }

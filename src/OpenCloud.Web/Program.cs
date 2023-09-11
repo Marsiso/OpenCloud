@@ -1,3 +1,4 @@
+using MudBlazor.Services;
 using OpenCloud.Application.Mappings;
 using OpenCloud.Application.Security;
 using OpenCloud.Data;
@@ -7,6 +8,8 @@ var applicationBuilder = WebApplication.CreateBuilder(args);
 
 applicationBuilder.Services.AddRazorPages();
 applicationBuilder.Services.AddServerSideBlazor();
+
+applicationBuilder.Services.AddMudServices();
 
 applicationBuilder.Services.AddAutoMapper(typeof(UserMappingConfiguration));
 applicationBuilder.Services.AddSqlite(applicationBuilder.Configuration, applicationBuilder.Environment);
